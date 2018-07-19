@@ -1,10 +1,11 @@
 from flask import Flask
+import pandas as pd
 import galpy
 import pygal
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/hello')
 def hello():
     return '<html><body>%s</body></html>' % galpy.pygal_stat()
 
@@ -19,12 +20,15 @@ def graph1():
     line_chart.add('Others',  [14.2, 15.4, 15.3,  8.9,    9, 10.4,  8.9,  5.8,  6.7,  6.8,  7.5])
     return '<html><body><div style="width:800px">%s</div></body></html>' % line_chart.render()
 
-@app.route('/2')
-def graph2():
+@app.route('/')
+def graph():
+    df = pd.read_csv('up.csv')
+    print df
     line_chart = pygal.Line()
     line_chart.title = '1,2,3'
-    line_chart.x_labels = map(str, range(201805, 201807))
-    line_chart.add('1', [34501, 35714, 35588])
-    line_chart.add('2', [39687, 42684, 40397])
-    line_chart.add('3', [43781, 50779, 50435])
-    return '<html><body><div style="width:800px">%s</div></body></html>' % line_chart.render()
+    line_chart.x_labels = df.columns
+    line_chart.add('1', df.values[0])
+    line_chart.add('2', df.values[1])
+    line_chart.add('3', df.values[2])
+    #line_chart.add('sum', df.sum().tolist())
+    return '<html><body><div style="width:1100px">%s</div></body></html>' % line_chart.render()
